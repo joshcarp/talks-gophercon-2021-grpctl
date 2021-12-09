@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en">
   <head>
-	<meta name="generator" content="Hugo 0.71.0-DEV" />
+	<meta name="generator" content="Hugo 0.88.0-DEV" />
     <meta charset="utf-8">
-<title>Google cloud functions</title>
+<title>grpctl</title>
 
 
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,162 +19,120 @@
       <div class="slides">
   
 
-    <section><h1 id="google-cloud-functions">Google cloud functions</h1>
-<ul>
-<li>Demo repo here: <a href="https://github.com/joshcarp/cloudfunctionsdemo">https://github.com/joshcarp/cloudfunctionsdemo</a></li>
-</ul>
+    <section><h1 id="grpctl">grpctl</h1>
 </section><section>
-<h1 id="google-cloud-functions-1">Google cloud functions</h1>
-<ul>
-<li>Serverless</li>
-<li>Docker-less</li>
-</ul>
-</section><section>
-<h1 id="supported-languages">Supported languages</h1>
-<ul>
-<li>Node.js 8 &amp; Node.js 10</li>
-<li>Python</li>
-<li>Go 1.11 &amp; Go 1.13</li>
-</ul>
-</section><section>
-<h1 id="code-structure">Code structure</h1>
-<pre><code>.
-├── function.go --&gt; function with http.HandlerFunc
-├── go.mod
-└── shared/
-    └── shared.go
-</code></pre></section><section>
-<h1 id="httphandlerfunc">http.Handlerfunc</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">HandlerFunc</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ResponseWriter</span>, <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>)
-</code></pre></div><p>example:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">ServeHTTP</span>(<span style="color:#a6e22e">w</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ResponseWriter</span>, <span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>) {
-  <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">Write</span>([]byte(<span style="color:#e6db74">&#34;Hello, world&#34;</span>))
-}
+<h2 id="problem">Problem</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>├── accounts
+│         └── accounts.proto
+├── cards
+│         └── cards.proto
+├── foobar
+│         └── foobar.proto
+├── petservice
+│         └── petservice.proto
+└── transactions
+    └── transactions.proto
+... a lot more
 </code></pre></div></section><section>
-<h1 id="deploying-from-github-actions">Deploying from github actions</h1>
-<p>Need: github service account with <code>Cloud Functions Admin</code> permissions</p>
-<ul>
-<li>go to <a href="https://console.cloud.google.com/iam-admin/serviceaccounts?project=gopper">cloud console iam admin service accounts</a></li>
-<li>click <code>Create Service account</code></li>
-<li>give service account <code>Cloud Functions Admin</code> permissions</li>
-</ul>
-</section><section>
-<h1 id="deploying-from-github-actions-1">Deploying from github actions</h1>
-<ul>
-<li>download access key</li>
-<li>Put access key in <code>GCLOUD_SERVICE_KEY</code> secret in repo</li>
-</ul>
-</section><section>
-<h1 id="github-actions">Github actions</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#66d9ef">name</span>: cloud-function-deploy
+<h3 id="need-a-way-to-interact-with-grpc-apis">Need a way to interact with gRPC APIs</h3>
+<h4 id="grpcurl">grpcurl</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>grpcurl accounts-preprod.example.com:443 AccountsAPI ListAccounts <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>        -H <span style="color:#e6db74">&#39;Authorization: Basic Foobar&#39;</span> -d <span style="color:#e6db74">&#39;{&#34;accountfield1&#34;: &#34;foo&#34;}&#39;</span>
 
-<span style="color:#66d9ef">on</span>:
-  <span style="color:#66d9ef">push</span>:
-    <span style="color:#66d9ef">branches</span>: [ master ]
-<span style="color:#66d9ef">jobs</span>:
-  <span style="color:#66d9ef">build</span>:
-    <span style="color:#66d9ef">runs-on</span>: ubuntu-latest
-    <span style="color:#66d9ef">steps</span>:
-      - <span style="color:#66d9ef">name</span>: Checkout repository
-        <span style="color:#66d9ef">uses</span>: actions/checkout@v2
+grpcurl petservice-preprod.example.com:443 PetService ListPets <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>        -H <span style="color:#e6db74">&#39;Authorization: Basic Foobar&#39;</span> -d <span style="color:#e6db74">&#39;{&#34;petservicefield2&#34;: &#34;bar&#34;}&#39;</span>
 
-      - <span style="color:#66d9ef">name</span>: Setup - gcloud / gsutil
-        <span style="color:#66d9ef">uses</span>: GoogleCloudPlatform/github-actions/setup-gcloud@master
-        <span style="color:#66d9ef">with</span>:
-          <span style="color:#66d9ef">service_account_key</span>: ${{ secrets.GCLOUD_SERVICE_KEY }}
-          <span style="color:#66d9ef">export_default_credentials</span>: <span style="color:#66d9ef">true</span>
-      - <span style="color:#66d9ef">name</span>: Set default project
-        <span style="color:#66d9ef">run</span>: gcloud config set core/project &lt;PROJECT NAME<span style="color:#e6db74">&gt;
-</span><span style="color:#e6db74">      - name: Deploy</span>
-        <span style="color:#66d9ef">run</span>: <span style="color:#e6db74">|
-</span><span style="color:#e6db74">          gcloud functions deploy &lt;FUNCTION NAME&gt; \</span>
-                 --entry-point=ServeHTTP \
-                 --runtime=go113 \
-                 --trigger-http \
-                 --allow-unauthenticated
-      - <span style="color:#66d9ef">name</span>: Set permissions
-        <span style="color:#66d9ef">run</span>: |<span style="color:#e6db74">-
-</span><span style="color:#e6db74">          gcloud functions add-iam-policy-binding &lt;FUNCTION NAME&gt;\</span>
-            --member=<span style="color:#e6db74">&#34;allUsers&#34;</span> \
-            --role=<span style="color:#e6db74">&#34;roles/cloudfunctions.invoker&#34;</span>
-</code></pre></div><p>more options <a href="https://cloud.google.com/sdk/gcloud/reference/functions/deploy">here</a></p>
-</section><section>
-<h1 id="push-to-master">Push to master</h1>
-<ul>
-<li>Should be deployed at <code>&lt;region&gt;-&lt;projectid&gt;cloudfunctions.net/&lt;function name&gt;</code></li>
-</ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>curl &lt;region&gt;-&lt;projectid&gt;cloudfunctions.net/&lt;<span style="color:#66d9ef">function</span> name&gt;
-&gt; Hello, World!
-</code></pre></div></section><section>
-<h1 id="create-a-gcs-bucket-via-cloud-console">Create a gcs bucket: via cloud console</h1>
-<ul>
-<li>go to <a href="https://console.cloud.google.com/storage/browser">https://console.cloud.google.com/storage/browser</a></li>
-<li>click <code>CREATE BUCKET</code></li>
+grpcurl transactions-preprod.example.com:443 TransactionAPI ListTransctions <span style="color:#ae81ff">\ </span>
+        -H <span style="color:#e6db74">&#39;Authorization: Basic Foobar&#39;</span> -d <span style="color:#e6db74">&#39;{&#34;transactionsfield2&#34;: &#34;blah&#34;}&#39;</span>
+</code></pre></div><ul>
+<li>Difficult to write ❌</li>
+<li>A lot to remember ❌</li>
 </ul>
 </section><section>
-<h1 id="authenticating-locally">Authenticating locally</h1>
-<ul>
-<li><code>export GOOGLE_APPLICATION_CREDENTIALS=&lt;path to json key&gt;</code></li>
-<li>Google cloud service account with:</li>
-<li><code>Storage Admin</code> permissions if creating buckets programmatically</li>
-<li><code>Storage Object Admin</code> for only read/write access to one bucket (can&rsquo;t create new buckets)</li>
+<h4 id="cobra">cobra</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>fooctl service1 ListFoo &lt;args&gt;
+fooctl service2 ListBar --field1<span style="color:#f92672">=</span>foo
+fooctl service2 ListBar --data<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{&#34;field2&#34;: &#34;blah&#34;}&#39;</span>
+</code></pre></div><ul>
+<li>Easier to write ✅</li>
+<li>Difficult to maintain ❌</li>
+<li>Every team will have varying implementations ❌</li>
 </ul>
 </section><section>
-<h1 id="uploading-files">Uploading files</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">upload</span>(<span style="color:#a6e22e">bucket</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">object</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">r</span> <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Reader</span>) <span style="color:#66d9ef">error</span> {
-	<span style="color:#a6e22e">ctx</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>()
-	<span style="color:#a6e22e">client</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">storage</span>.<span style="color:#a6e22e">NewClient</span>(<span style="color:#a6e22e">ctx</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;storage.NewClient: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
-	}
-	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">Close</span>()
+<h3 id="grpctl-1">grpctl</h3>
+<figure><img src="filedescriptor.png" width="70%"/>
+</figure>
 
-	<span style="color:#a6e22e">wc</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">Bucket</span>(<span style="color:#a6e22e">bucket</span>).<span style="color:#a6e22e">Object</span>(<span style="color:#a6e22e">object</span>).<span style="color:#a6e22e">NewWriter</span>(<span style="color:#a6e22e">ctx</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Copy</span>(<span style="color:#a6e22e">wc</span>, <span style="color:#a6e22e">r</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;io.Copy: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
-	}
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">wc</span>.<span style="color:#a6e22e">Close</span>(); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;Writer.Close: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
-	}
-	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</section><section>
+<h4 id="what-is-protoreflectfiledescriptor">What is protoreflect.FileDescriptor??</h4>
+<ul>
+<li>
+<p>Has information about Services, Methods, Messages, etc</p>
+</li>
+<li>
+<p>Same information that gRPC reflection does</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>
+<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FileDescriptor</span> <span style="color:#66d9ef">interface</span> {
+
+	<span style="color:#a6e22e">Descriptor</span> <span style="color:#75715e">// Descriptor.FullName is identical to Package
+</span><span style="color:#75715e"></span>
+	<span style="color:#75715e">// Path returns the file name, relative to the source tree root.
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">Path</span>() <span style="color:#66d9ef">string</span> <span style="color:#75715e">// e.g., &#34;path/to/file.proto&#34;
+</span><span style="color:#75715e"></span>
+	<span style="color:#75715e">// Package returns the protobuf package namespace.
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">Package</span>() <span style="color:#a6e22e">FullName</span> <span style="color:#75715e">// e.g., &#34;google.protobuf&#34;
+</span><span style="color:#75715e"></span>
+	<span style="color:#75715e">// Imports is a list of imported proto files.
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">Imports</span>() <span style="color:#a6e22e">FileImports</span>
+
+	<span style="color:#75715e">// Enums is a list of the top-level enum declarations.
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">Enums</span>() <span style="color:#a6e22e">EnumDescriptors</span>
+
+	<span style="color:#75715e">// Messages is a list of the top-level message declarations.
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">Messages</span>() <span style="color:#a6e22e">MessageDescriptors</span>
+
+	<span style="color:#75715e">// Extensions is a list of the top-level extension declarations.
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">Extensions</span>() <span style="color:#a6e22e">ExtensionDescriptors</span>
+
+	<span style="color:#75715e">// Services is a list of the top-level service declarations.
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">Services</span>() <span style="color:#a6e22e">ServiceDescriptors</span>
+
+	<span style="color:#75715e">// SourceLocations is a list of source locations.
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">SourceLocations</span>() <span style="color:#a6e22e">SourceLocations</span>
+
+	<span style="color:#75715e">// contains filtered or unexported methods
+</span><span style="color:#75715e"></span>
 }
-</code></pre></div></section><section>
-<h1 id="downloading-files">Downloading files</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">download</span>(<span style="color:#a6e22e">bucket</span>, <span style="color:#a6e22e">object</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">Reader</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#a6e22e">ctx</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>()
-	<span style="color:#a6e22e">client</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">storage</span>.<span style="color:#a6e22e">NewClient</span>(<span style="color:#a6e22e">ctx</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;storage.NewClient: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
-	}
-	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">Close</span>()
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">Bucket</span>(<span style="color:#a6e22e">bucket</span>).<span style="color:#a6e22e">Object</span>(<span style="color:#a6e22e">object</span>).<span style="color:#a6e22e">NewReader</span>(<span style="color:#a6e22e">ctx</span>)
-}
-</code></pre></div></section><section>
-<h1 id="bonus-create-a-gcs-bucket-in-go">Bonus create a gcs bucket in go</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewBucket</span>(<span style="color:#a6e22e">bucketName</span> <span style="color:#66d9ef">string</span>)<span style="color:#66d9ef">error</span>{
-	<span style="color:#a6e22e">ctx</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>()
-	<span style="color:#a6e22e">client</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">storage</span>.<span style="color:#a6e22e">NewClient</span>(<span style="color:#a6e22e">ctx</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
-	}
 
-	<span style="color:#a6e22e">bucket</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">client</span>.<span style="color:#a6e22e">Bucket</span>(<span style="color:#a6e22e">bucketName</span>)
-	<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">cancel</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithTimeout</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span><span style="color:#f92672">*</span><span style="color:#ae81ff">10</span>)
-	<span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">cancel</span>()
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">bucket</span>.<span style="color:#a6e22e">Create</span>(<span style="color:#a6e22e">ctx</span>, <span style="color:#a6e22e">projectID</span>, <span style="color:#66d9ef">nil</span>); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
-	}
-	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
-}
-</code></pre></div><h1 id="authenticating-locally-vs-cloud-functions">Authenticating locally vs Cloud functions</h1>
+</code></pre></div></section><section>
+<h4 id="grpctl-2">grpctl</h4>
 <ul>
-<li>Locally the service account needs <code>Storage Admin</code>/ <code>Storage Object Admin</code></li>
-<li>On google cloud functions all functions already have access to the bucket</li>
-</ul>
-<h1 id="demo-repo">Demo repo</h1>
+<li>
+<p>protoreflect.FileDescriptor:</p>
 <ul>
-<li><a href="https://github.com/joshcarp/cloudfunctionsdemo">https://github.com/joshcarp/cloudfunctionsdemo</a></li>
+<li>
+<p>protoreflect.ServiceDescriptor -&gt; cobra.Command <code>fooctl PetService</code></p>
+</li>
+<li>
+<p>protoreflect.MethodDescriptor -&gt; cobra.Command <code>fooctl PetService ListPets</code></p>
+</li>
+<li>
+<p>protoreflect.MessageDescriptor -&gt; flags, autocompletion <code>fooctl PetService ListPets --name=brian</code></p>
+</li>
 </ul>
+</li>
+</ul>
+</section><section>
 </section>
 
   
