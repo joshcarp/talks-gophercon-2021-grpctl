@@ -4,6 +4,9 @@ outputs = ["Reveal"]
 +++
 
 # grpctl
+
+Automatically generate a cli tool for your apis
+
 ---
 
 ## Problem
@@ -112,17 +115,44 @@ type FileDescriptor interface {
 }
 
 ```
+
 ---
 #### grpctl
-
-- protoreflect.FileDescriptor:
-
-    - protoreflect.ServiceDescriptor -> cobra.Command `fooctl PetService`
-
-    - protoreflect.MethodDescriptor -> cobra.Command `fooctl PetService ListPets`
-
-    - protoreflect.MessageDescriptor -> flags, autocompletion `fooctl PetService ListPets --name=brian`
+| protoreflect | cobra | example
+| -- | -- | -- |
+| ServiceDescriptor| Command | `fooctl PetService`
+| MethodDescriptor | Command | `fooctl PetService ListPets`
+| MessageDescriptor| flags | `fooctl PetService ListPets --name=brian`
     
+---
 
+#### example
+
+![](https://raw.githubusercontent.com/joshcarp/grpctl/main/examplectl.gif)
 
 ---
+
+### Installation
+
+```go
+func main() {
+	cmd := &cobra.Command{
+		Use:   "billingctl",
+		Short: "an example cli tool for the gcp billing api",
+	}
+	err := grpctl.BuildCommand(cmd,
+		grpctl.WithArgs(os.Args),
+		grpctl.WithFileDescriptors(
+			billing.File_google_cloud_billing_v1_cloud_billing_proto,
+			billing.File_google_cloud_billing_v1_cloud_catalog_proto,
+		),
+	)
+	cobra.CheckErr(err)
+	cobra.CheckErr(cmd.Execute())
+}
+```
+---
+
+#### Bonus
+
+![](https://raw.githubusercontent.com/joshcarp/grpctl/main/grpctl.svg)
