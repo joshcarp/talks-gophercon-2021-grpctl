@@ -156,3 +156,11 @@ func main() {
 #### Bonus
 
 ![](https://raw.githubusercontent.com/joshcarp/grpctl/main/grpctl.svg)
+
+--- 
+
+### Links
+
+- [github.com/joshcarp/grpctl](https://github.com/joshcarp/grpctl)
+- [gophers slack #grpctl](https://gophers.slack.com/archives/C02CAH9NP7H)
+- [Slides](https://joshcarp.com/talks-grpctl-1),  [Source](https://github.com/joshcarp/talks-grpctl-1)
