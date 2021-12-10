@@ -163,4 +163,4 @@ func main() {
 
 - [github.com/joshcarp/grpctl](https://github.com/joshcarp/grpctl)
 - [gophers slack #grpctl](https://gophers.slack.com/archives/C02CAH9NP7H)
-- [Slides](https://joshcarp.com/talks-grpctl-1),  [Source](https://github.com/joshcarp/talks-grpctl-1)
+- [Slides](https://joshcarp.com/talks-grpctl),  [Source](https://github.com/joshcarp/talks-grpctl)
