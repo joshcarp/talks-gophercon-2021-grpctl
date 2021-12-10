@@ -20,20 +20,137 @@
   
 
     <section><h1 id="grpctl">grpctl</h1>
-<p>Automatically generate a cli tool for your apis</p>
+<p>Automatically generate a cli for your apis</p>
+<ul>
+<li>
+<p>@joshjcarp</p>
+</li>
+<li>
+<p><a href="https://github.com/joshcarp/grpctl">github.com/joshcarp/grpctl</a></p>
+</li>
+<li>
+<p><a href="https://gophers.slack.com/archives/C02CAH9NP7H">gophers slack #grpctl</a></p>
+</li>
+<li>
+<p><a href="https://joshcarp.com/talks-grpctl">joshcarp.com/talks-grpctl</a></p>
+</li>
+<li>
+<p><a href="https://joshcarp.com">joshcarp.com</a></p>
+</li>
+</ul>
 </section><section>
+<p>Task: interact with a google grpc api:</p>
+<ul>
+<li><a href="https://github.com/googleapis/googleapis/blob/master/google/cloud/billing/v1/cloud_billing.proto#L34">billingctl proto</a></li>
+<li><a href="https://github.com/googleapis/go-genproto/blob/main/googleapis/cloud/billing/v1/cloud_catalog.pb.go">generated go code</a></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>
+auth<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>gcloud auth application-default print-access-token<span style="color:#66d9ef">)</span>
+billingctl -H<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Authorization: Bearer </span>$auth<span style="color:#e6db74">&#34;</span> CloudCatalog ListServices
+
+</code></pre></div></section><section>
 <h2 id="problem">Problem</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>├── accounts
-│         └── accounts.proto
-├── cards
-│         └── cards.proto
-├── foobar
-│         └── foobar.proto
-├── petservice
-│         └── petservice.proto
-└── transactions
-    └── transactions.proto
-... a lot more
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>.
+├── BUILD.bazel
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── LICENSE
+├── Makefile
+├── PACKAGES.md
+├── README.md
+├── SECURITY.md
+├── WORKSPACE
+├── api-index-v1.json
+├── gapic
+│   └── metadata
+│       ├── BUILD.bazel
+│       └── gapic_metadata.proto
+├── google
+│   ├── BUILD.bazel
+│   ├── actions
+│   │   ├── sdk
+│   │   │   └── v2
+│   │   │       ├── BUILD.bazel
+│   │   │       ├── account_linking.proto
+│   │   │       ├── account_linking_secret.proto
+│   │   │       ├── action.proto
+│   │   │       ├── actions_grpc_service_config.json
+│   │   │       ├── actions_sdk.proto
+│   │   │       ├── actions_testing.proto
+│   │   │       ├── actions_v2.yaml
+│   │   │       ├── config_file.proto
+│   │   │       ├── conversation
+│   │   │       │   ├── BUILD.bazel
+│   │   │       │   ├── intent.proto
+│   │   │       │   ├── prompt
+│   │   │       │   │   ├── BUILD.bazel
+│   │   │       │   │   ├── content
+│   │   │       │   │   │   ├── BUILD.bazel
+│   │   │       │   │   │   ├── canvas.proto
+│   │   │       │   │   │   ├── card.proto
+│   │   │       │   │   │   ├── collection.proto
+│   │   │       │   │   │   ├── content.proto
+│   │   │       │   │   │   ├── image.proto
+│   │   │       │   │   │   ├── link.proto
+│   │   │       │   │   │   ├── list.proto
+│   │   │       │   │   │   ├── media.proto
+│   │   │       │   │   │   └── table.proto
+│   │   │       │   │   ├── prompt.proto
+│   │   │       │   │   ├── simple.proto
+│   │   │       │   │   └── suggestion.proto
+│   │   │       │   └── scene.proto
+│   │   │       ├── data_file.proto
+│   │   │       ├── event_logs.proto
+│   │   │       ├── files.proto
+│   │   │       ├── interactionmodel
+│   │   │       │   ├── BUILD.bazel
+│   │   │       │   ├── conditional_event.proto
+│   │   │       │   ├── entity_set.proto
+│   │   │       │   ├── event_handler.proto
+│   │   │       │   ├── global_intent_event.proto
+│   │   │       │   ├── intent.proto
+│   │   │       │   ├── intent_event.proto
+│   │   │       │   ├── prompt
+│   │   │       │   │   ├── BUILD.bazel
+│   │   │       │   │   ├── content
+│   │   │       │   │   │   ├── BUILD.bazel
+│   │   │       │   │   │   ├── static_canvas_prompt.proto
+│   │   │       │   │   │   ├── static_card_prompt.proto
+│   │   │       │   │   │   ├── static_collection_browse_prompt.proto
+│   │   │       │   │   │   ├── static_collection_prompt.proto
+│   │   │       │   │   │   ├── static_content_prompt.proto
+│   │   │       │   │   │   ├── static_image_prompt.proto
+│   │   │       │   │   │   ├── static_link_prompt.proto
+│   │   │       │   │   │   ├── static_list_prompt.proto
+│   │   │       │   │   │   ├── static_media_prompt.proto
+│   │   │       │   │   │   └── static_table_prompt.proto
+│   │   │       │   │   ├── static_prompt.proto
+│   │   │       │   │   ├── static_simple_prompt.proto
+│   │   │       │   │   ├── suggestion.proto
+│   │   │       │   │   └── surface_capabilities.proto
+│   │   │       │   ├── scene.proto
+│   │   │       │   ├── slot.proto
+│   │   │       │   └── type
+│   │   │       │       ├── BUILD.bazel
+│   │   │       │       ├── class_reference.proto
+│   │   │       │       ├── entity_display.proto
+│   │   │       │       ├── free_text_type.proto
+│   │   │       │       ├── regular_expression_type.proto
+│   │   │       │       ├── synonym_type.proto
+│   │   │       │       └── type.proto
+│   │   │       ├── localized_settings.proto
+│   │   │       ├── manifest.proto
+│   │   │       ├── release_channel.proto
+│   │   │       ├── settings.proto
+│   │   │       ├── surface.proto
+│   │   │       ├── theme_customization.proto
+│   │   │       ├── validation_results.proto
+│   │   │       ├── version.proto
+│   │   │       └── webhook.proto
+│   │   └── type
+│   │       ├── BUILD.bazel
+│   │       ├── date_range.proto
+
 </code></pre></div></section><section>
 <h3 id="need-a-way-to-interact-with-grpc-apis">Need a way to interact with gRPC APIs</h3>
 <h4 id="grpcurl">grpcurl</h4>
@@ -55,68 +172,55 @@ grpcurl transactions-preprod.example.com:443 TransactionAPI ListTransctions <spa
 fooctl service2 ListBar --field1<span style="color:#f92672">=</span>foo
 fooctl service2 ListBar --data<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{&#34;field2&#34;: &#34;blah&#34;}&#39;</span>
 </code></pre></div><ul>
-<li>Easier to write ✅</li>
+<li>Easier to interact ✅</li>
 <li>Difficult to maintain ❌</li>
 <li>Every team will have varying implementations ❌</li>
 </ul>
 </section><section>
-<h3 id="grpctl">grpctl</h3>
+<h3 id="grpctl-1">grpctl</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+
+<span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">&#34;context&#34;</span>
+	<span style="color:#e6db74">&#34;log&#34;</span>
+	<span style="color:#e6db74">&#34;os&#34;</span>
+
+	<span style="color:#e6db74">&#34;github.com/joshcarp/grpctl&#34;</span>
+	<span style="color:#e6db74">&#34;github.com/spf13/cobra&#34;</span>
+	<span style="color:#e6db74">&#34;google.golang.org/genproto/googleapis/cloud/billing/v1&#34;</span>
+)
+
+<span style="color:#75715e">// Example call:
+</span><span style="color:#75715e">// billingctl -H=&#34;Authorization: Bearer $(gcloud auth application-default print-access-token)&#34; CloudBilling ListBillingAccounts.
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">cobra</span>.<span style="color:#a6e22e">Command</span>{
+		<span style="color:#a6e22e">Use</span>:   <span style="color:#e6db74">&#34;billingctl&#34;</span>,
+		<span style="color:#a6e22e">Short</span>: <span style="color:#e6db74">&#34;an example cli tool for the gcp billing api&#34;</span>,
+	}
+	<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">grpctl</span>.<span style="color:#a6e22e">BuildCommand</span>(<span style="color:#a6e22e">cmd</span>,
+		<span style="color:#a6e22e">grpctl</span>.<span style="color:#a6e22e">WithArgs</span>(<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Args</span>),
+		<span style="color:#a6e22e">grpctl</span>.<span style="color:#a6e22e">WithFileDescriptors</span>(
+			<span style="color:#a6e22e">billing</span>.<span style="color:#a6e22e">File_google_cloud_billing_v1_cloud_billing_proto</span>,
+			<span style="color:#a6e22e">billing</span>.<span style="color:#a6e22e">File_google_cloud_billing_v1_cloud_catalog_proto</span>,
+		),
+	)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Print</span>(<span style="color:#a6e22e">err</span>)
+	}
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">grpctl</span>.<span style="color:#a6e22e">RunCommand</span>(<span style="color:#a6e22e">cmd</span>, <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Background</span>()); <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Print</span>(<span style="color:#a6e22e">err</span>)
+	}
+}
+</code></pre></div></section><section>
+<h3 id="grpctl-2">grpctl</h3>
+<ul>
+<li><a href="https://github.com/googleapis/go-genproto/blob/3a66f561d7aa4010d9715ecf4c19b19e81e19f3c/googleapis/cloud/billing/v1/cloud_catalog.pb.go#L1059">protoreflect.FileDescriptor</a></li>
+</ul>
 <figure><img src="filedescriptor.png" width="70%"/>
 </figure>
 
 </section><section>
-<h4 id="what-is-protoreflectfiledescriptor">What is protoreflect.FileDescriptor??</h4>
-<ul>
-<li>
-<p>Has information about Services, Methods, Messages, etc</p>
-</li>
-<li>
-<p>Same information that gRPC reflection does</p>
-</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape>
-<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FileDescriptor</span> <span style="color:#66d9ef">interface</span> {
-
-	<span style="color:#a6e22e">Descriptor</span> <span style="color:#75715e">// Descriptor.FullName is identical to Package
-</span><span style="color:#75715e"></span>
-	<span style="color:#75715e">// Path returns the file name, relative to the source tree root.
-</span><span style="color:#75715e"></span>
-	<span style="color:#a6e22e">Path</span>() <span style="color:#66d9ef">string</span> <span style="color:#75715e">// e.g., &#34;path/to/file.proto&#34;
-</span><span style="color:#75715e"></span>
-	<span style="color:#75715e">// Package returns the protobuf package namespace.
-</span><span style="color:#75715e"></span>
-	<span style="color:#a6e22e">Package</span>() <span style="color:#a6e22e">FullName</span> <span style="color:#75715e">// e.g., &#34;google.protobuf&#34;
-</span><span style="color:#75715e"></span>
-	<span style="color:#75715e">// Imports is a list of imported proto files.
-</span><span style="color:#75715e"></span>
-	<span style="color:#a6e22e">Imports</span>() <span style="color:#a6e22e">FileImports</span>
-
-	<span style="color:#75715e">// Enums is a list of the top-level enum declarations.
-</span><span style="color:#75715e"></span>
-	<span style="color:#a6e22e">Enums</span>() <span style="color:#a6e22e">EnumDescriptors</span>
-
-	<span style="color:#75715e">// Messages is a list of the top-level message declarations.
-</span><span style="color:#75715e"></span>
-	<span style="color:#a6e22e">Messages</span>() <span style="color:#a6e22e">MessageDescriptors</span>
-
-	<span style="color:#75715e">// Extensions is a list of the top-level extension declarations.
-</span><span style="color:#75715e"></span>
-	<span style="color:#a6e22e">Extensions</span>() <span style="color:#a6e22e">ExtensionDescriptors</span>
-
-	<span style="color:#75715e">// Services is a list of the top-level service declarations.
-</span><span style="color:#75715e"></span>
-	<span style="color:#a6e22e">Services</span>() <span style="color:#a6e22e">ServiceDescriptors</span>
-
-	<span style="color:#75715e">// SourceLocations is a list of source locations.
-</span><span style="color:#75715e"></span>
-	<span style="color:#a6e22e">SourceLocations</span>() <span style="color:#a6e22e">SourceLocations</span>
-
-	<span style="color:#75715e">// contains filtered or unexported methods
-</span><span style="color:#75715e"></span>
-}
-
-</code></pre></div></section><section>
-<h4 id="grpctl-2">grpctl</h4>
+<h4 id="grpctl-3">grpctl</h4>
 <table>
 <thead>
 <tr>
@@ -147,23 +251,6 @@ fooctl service2 ListBar --data<span style="color:#f92672">=</span><span style="c
 <h4 id="example">example</h4>
 <p><img src="https://raw.githubusercontent.com/joshcarp/grpctl/main/examplectl.gif" alt=""></p>
 </section><section>
-<h3 id="installation">Installation</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="nohighlight" data-noescape><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-	<span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">cobra</span>.<span style="color:#a6e22e">Command</span>{
-		<span style="color:#a6e22e">Use</span>:   <span style="color:#e6db74">&#34;billingctl&#34;</span>,
-		<span style="color:#a6e22e">Short</span>: <span style="color:#e6db74">&#34;an example cli tool for the gcp billing api&#34;</span>,
-	}
-	<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">grpctl</span>.<span style="color:#a6e22e">BuildCommand</span>(<span style="color:#a6e22e">cmd</span>,
-		<span style="color:#a6e22e">grpctl</span>.<span style="color:#a6e22e">WithArgs</span>(<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Args</span>),
-		<span style="color:#a6e22e">grpctl</span>.<span style="color:#a6e22e">WithFileDescriptors</span>(
-			<span style="color:#a6e22e">billing</span>.<span style="color:#a6e22e">File_google_cloud_billing_v1_cloud_billing_proto</span>,
-			<span style="color:#a6e22e">billing</span>.<span style="color:#a6e22e">File_google_cloud_billing_v1_cloud_catalog_proto</span>,
-		),
-	)
-	<span style="color:#a6e22e">cobra</span>.<span style="color:#a6e22e">CheckErr</span>(<span style="color:#a6e22e">err</span>)
-	<span style="color:#a6e22e">cobra</span>.<span style="color:#a6e22e">CheckErr</span>(<span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Execute</span>())
-}
-</code></pre></div></section><section>
 <h4 id="bonus">Bonus</h4>
 <p><img src="https://raw.githubusercontent.com/joshcarp/grpctl/main/grpctl.svg" alt=""></p>
 </section><section>
@@ -171,7 +258,8 @@ fooctl service2 ListBar --data<span style="color:#f92672">=</span><span style="c
 <ul>
 <li><a href="https://github.com/joshcarp/grpctl">github.com/joshcarp/grpctl</a></li>
 <li><a href="https://gophers.slack.com/archives/C02CAH9NP7H">gophers slack #grpctl</a></li>
-<li><a href="https://joshcarp.com/talks-grpctl">Slides</a>,  <a href="https://github.com/joshcarp/talks-grpctl">Source</a></li>
+<li><a href="https://joshcarp.com/talks-grpctl">joshcarp.com/talks-grpctl</a></li>
+<li><a href="https://joshcarp.com">joshcarp.com</a></li>
 </ul>
 </section>
 

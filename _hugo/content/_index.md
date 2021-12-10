@@ -5,24 +5,136 @@ outputs = ["Reveal"]
 
 # grpctl
 
-Automatically generate a cli tool for your apis
+Automatically generate a cli for your apis
+
+- @joshjcarp
+  
+- [github.com/joshcarp/grpctl](https://github.com/joshcarp/grpctl)
+- [gophers slack #grpctl](https://gophers.slack.com/archives/C02CAH9NP7H)
+- [joshcarp.com/talks-grpctl](https://joshcarp.com/talks-grpctl)
+- [joshcarp.com](https://joshcarp.com)
+
+
+---
+
+Task: interact with a google grpc api: 
+- [billingctl proto](https://github.com/googleapis/googleapis/blob/master/google/cloud/billing/v1/cloud_billing.proto#L34)
+- [generated go code](https://github.com/googleapis/go-genproto/blob/main/googleapis/cloud/billing/v1/cloud_catalog.pb.go)
+
+
+```bash
+
+auth=$(gcloud auth application-default print-access-token)
+billingctl -H="Authorization: Bearer $auth" CloudCatalog ListServices
+
+```
 
 ---
 
 ## Problem
 
 ```bash
-├── accounts
-│         └── accounts.proto
-├── cards
-│         └── cards.proto
-├── foobar
-│         └── foobar.proto
-├── petservice
-│         └── petservice.proto
-└── transactions
-    └── transactions.proto
-... a lot more
+.
+├── BUILD.bazel
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── LICENSE
+├── Makefile
+├── PACKAGES.md
+├── README.md
+├── SECURITY.md
+├── WORKSPACE
+├── api-index-v1.json
+├── gapic
+│   └── metadata
+│       ├── BUILD.bazel
+│       └── gapic_metadata.proto
+├── google
+│   ├── BUILD.bazel
+│   ├── actions
+│   │   ├── sdk
+│   │   │   └── v2
+│   │   │       ├── BUILD.bazel
+│   │   │       ├── account_linking.proto
+│   │   │       ├── account_linking_secret.proto
+│   │   │       ├── action.proto
+│   │   │       ├── actions_grpc_service_config.json
+│   │   │       ├── actions_sdk.proto
+│   │   │       ├── actions_testing.proto
+│   │   │       ├── actions_v2.yaml
+│   │   │       ├── config_file.proto
+│   │   │       ├── conversation
+│   │   │       │   ├── BUILD.bazel
+│   │   │       │   ├── intent.proto
+│   │   │       │   ├── prompt
+│   │   │       │   │   ├── BUILD.bazel
+│   │   │       │   │   ├── content
+│   │   │       │   │   │   ├── BUILD.bazel
+│   │   │       │   │   │   ├── canvas.proto
+│   │   │       │   │   │   ├── card.proto
+│   │   │       │   │   │   ├── collection.proto
+│   │   │       │   │   │   ├── content.proto
+│   │   │       │   │   │   ├── image.proto
+│   │   │       │   │   │   ├── link.proto
+│   │   │       │   │   │   ├── list.proto
+│   │   │       │   │   │   ├── media.proto
+│   │   │       │   │   │   └── table.proto
+│   │   │       │   │   ├── prompt.proto
+│   │   │       │   │   ├── simple.proto
+│   │   │       │   │   └── suggestion.proto
+│   │   │       │   └── scene.proto
+│   │   │       ├── data_file.proto
+│   │   │       ├── event_logs.proto
+│   │   │       ├── files.proto
+│   │   │       ├── interactionmodel
+│   │   │       │   ├── BUILD.bazel
+│   │   │       │   ├── conditional_event.proto
+│   │   │       │   ├── entity_set.proto
+│   │   │       │   ├── event_handler.proto
+│   │   │       │   ├── global_intent_event.proto
+│   │   │       │   ├── intent.proto
+│   │   │       │   ├── intent_event.proto
+│   │   │       │   ├── prompt
+│   │   │       │   │   ├── BUILD.bazel
+│   │   │       │   │   ├── content
+│   │   │       │   │   │   ├── BUILD.bazel
+│   │   │       │   │   │   ├── static_canvas_prompt.proto
+│   │   │       │   │   │   ├── static_card_prompt.proto
+│   │   │       │   │   │   ├── static_collection_browse_prompt.proto
+│   │   │       │   │   │   ├── static_collection_prompt.proto
+│   │   │       │   │   │   ├── static_content_prompt.proto
+│   │   │       │   │   │   ├── static_image_prompt.proto
+│   │   │       │   │   │   ├── static_link_prompt.proto
+│   │   │       │   │   │   ├── static_list_prompt.proto
+│   │   │       │   │   │   ├── static_media_prompt.proto
+│   │   │       │   │   │   └── static_table_prompt.proto
+│   │   │       │   │   ├── static_prompt.proto
+│   │   │       │   │   ├── static_simple_prompt.proto
+│   │   │       │   │   ├── suggestion.proto
+│   │   │       │   │   └── surface_capabilities.proto
+│   │   │       │   ├── scene.proto
+│   │   │       │   ├── slot.proto
+│   │   │       │   └── type
+│   │   │       │       ├── BUILD.bazel
+│   │   │       │       ├── class_reference.proto
+│   │   │       │       ├── entity_display.proto
+│   │   │       │       ├── free_text_type.proto
+│   │   │       │       ├── regular_expression_type.proto
+│   │   │       │       ├── synonym_type.proto
+│   │   │       │       └── type.proto
+│   │   │       ├── localized_settings.proto
+│   │   │       ├── manifest.proto
+│   │   │       ├── release_channel.proto
+│   │   │       ├── settings.proto
+│   │   │       ├── surface.proto
+│   │   │       ├── theme_customization.proto
+│   │   │       ├── validation_results.proto
+│   │   │       ├── version.proto
+│   │   │       └── webhook.proto
+│   │   └── type
+│   │       ├── BUILD.bazel
+│   │       ├── date_range.proto
+
 ```
 
 ---
@@ -54,7 +166,7 @@ fooctl service2 ListBar --field1=foo
 fooctl service2 ListBar --data='{"field2": "blah"}'
 ```
 
-- Easier to write ✅
+- Easier to interact ✅
 - Difficult to maintain ❌
 - Every team will have varying implementations ❌
 
@@ -62,59 +174,49 @@ fooctl service2 ListBar --data='{"field2": "blah"}'
 
 ### grpctl
 
-{{< figure src="filedescriptor.png" width="70%" >}}
+```go
+package main
+
+import (
+	"context"
+	"log"
+	"os"
+
+	"github.com/joshcarp/grpctl"
+	"github.com/spf13/cobra"
+	"google.golang.org/genproto/googleapis/cloud/billing/v1"
+)
+
+// Example call:
+// billingctl -H="Authorization: Bearer $(gcloud auth application-default print-access-token)" CloudBilling ListBillingAccounts.
+func main() {
+	cmd := &cobra.Command{
+		Use:   "billingctl",
+		Short: "an example cli tool for the gcp billing api",
+	}
+	err := grpctl.BuildCommand(cmd,
+		grpctl.WithArgs(os.Args),
+		grpctl.WithFileDescriptors(
+			billing.File_google_cloud_billing_v1_cloud_billing_proto,
+			billing.File_google_cloud_billing_v1_cloud_catalog_proto,
+		),
+	)
+	if err != nil {
+		log.Print(err)
+	}
+	if err := grpctl.RunCommand(cmd, context.Background()); err != nil {
+		log.Print(err)
+	}
+}
+```
 
 ---
 
-#### What is protoreflect.FileDescriptor??
+### grpctl
 
-- Has information about Services, Methods, Messages, etc
+- [protoreflect.FileDescriptor](https://github.com/googleapis/go-genproto/blob/3a66f561d7aa4010d9715ecf4c19b19e81e19f3c/googleapis/cloud/billing/v1/cloud_catalog.pb.go#L1059)
 
-- Same information that gRPC reflection does
-
-```go
-
-type FileDescriptor interface {
-
-	Descriptor // Descriptor.FullName is identical to Package
-
-	// Path returns the file name, relative to the source tree root.
-
-	Path() string // e.g., "path/to/file.proto"
-
-	// Package returns the protobuf package namespace.
-
-	Package() FullName // e.g., "google.protobuf"
-
-	// Imports is a list of imported proto files.
-
-	Imports() FileImports
-
-	// Enums is a list of the top-level enum declarations.
-
-	Enums() EnumDescriptors
-
-	// Messages is a list of the top-level message declarations.
-
-	Messages() MessageDescriptors
-
-	// Extensions is a list of the top-level extension declarations.
-
-	Extensions() ExtensionDescriptors
-
-	// Services is a list of the top-level service declarations.
-
-	Services() ServiceDescriptors
-
-	// SourceLocations is a list of source locations.
-
-	SourceLocations() SourceLocations
-
-	// contains filtered or unexported methods
-
-}
-
-```
+{{< figure src="filedescriptor.png" width="70%" >}}
 
 ---
 #### grpctl
@@ -132,27 +234,6 @@ type FileDescriptor interface {
 
 ---
 
-### Installation
-
-```go
-func main() {
-	cmd := &cobra.Command{
-		Use:   "billingctl",
-		Short: "an example cli tool for the gcp billing api",
-	}
-	err := grpctl.BuildCommand(cmd,
-		grpctl.WithArgs(os.Args),
-		grpctl.WithFileDescriptors(
-			billing.File_google_cloud_billing_v1_cloud_billing_proto,
-			billing.File_google_cloud_billing_v1_cloud_catalog_proto,
-		),
-	)
-	cobra.CheckErr(err)
-	cobra.CheckErr(cmd.Execute())
-}
-```
----
-
 #### Bonus
 
 ![](https://raw.githubusercontent.com/joshcarp/grpctl/main/grpctl.svg)
@@ -163,4 +244,5 @@ func main() {
 
 - [github.com/joshcarp/grpctl](https://github.com/joshcarp/grpctl)
 - [gophers slack #grpctl](https://gophers.slack.com/archives/C02CAH9NP7H)
-- [Slides](https://joshcarp.com/talks-grpctl),  [Source](https://github.com/joshcarp/talks-grpctl)
+- [joshcarp.com/talks-grpctl](https://joshcarp.com/talks-grpctl)
+- [joshcarp.com](https://joshcarp.com)
