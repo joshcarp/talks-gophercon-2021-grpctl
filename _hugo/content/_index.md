@@ -13,8 +13,6 @@ Automatically generate a cli for your apis
 - [github.com/joshcarp/grpctl](https://github.com/joshcarp/grpctl)
 - [gophers slack #grpctl](https://gophers.slack.com/archives/C02CAH9NP7H)
 - [joshcarp.com/talks-grpctl](https://joshcarp.com/talks-grpctl)
-- [joshcarp.com](https://joshcarp.com)
-
 
 ---
 
@@ -246,4 +244,3 @@ func main() {
 - [github.com/joshcarp/grpctl](https://github.com/joshcarp/grpctl)
 - [gophers slack #grpctl](https://gophers.slack.com/archives/C02CAH9NP7H)
 - [joshcarp.com/talks-grpctl](https://joshcarp.com/talks-grpctl)
-- [joshcarp.com](https://joshcarp.com)
