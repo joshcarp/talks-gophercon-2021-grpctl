@@ -235,7 +235,7 @@ func main() {
 
 ---
 
-#### Bonus
+#### Bonus: reflection
 
 ![](https://raw.githubusercontent.com/joshcarp/grpctl/main/grpctl.svg)
 
