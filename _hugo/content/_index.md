@@ -8,7 +8,7 @@ outputs = ["Reveal"]
 Automatically generate a cli for your apis
 
 - Joshua Carpeggiani
-- Software engineer ANZ
+- Software engineer at ANZ
 - @joshjcarp
 - [github.com/joshcarp/grpctl](https://github.com/joshcarp/grpctl)
 - [gophers slack #grpctl](https://gophers.slack.com/archives/C02CAH9NP7H)
